@@ -3,7 +3,7 @@ import os
 import numpy as np
 import matplotlib.image as mpimg
 
-def calib():
+def calibrate():
     dir_list = os.listdir(path='./camera_cal/')
 
     calib_img = []
