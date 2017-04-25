@@ -5,8 +5,8 @@ import matplotlib.image as mpimg
 
 
 # Read in an image
-image = cv2.imread('signs_vehicles_xygrad.png')
-print()
+#image = cv2.imread('signs_vehicles_xygrad.png')
+
 # Function to calc gradient direction between given thresholds
 
 def dir_threshold(img, sobel_kernel=3, thresh=(0, np.pi/2)):
@@ -68,9 +68,10 @@ def abs_sobel_thresh(img, orient='x', sobel_kernel=3, thresh=(0,255)):
 
     return sxbinary
 
+'''
 ksize = 3
 
-'''
+
 gradx = abs_sobel_thresh(image, orient='x',sobel_kernel=ksize, thresh=(25,100))
 grady = abs_sobel_thresh(image, orient='y',sobel_kernel=ksize, thresh=(25,100))
 mag_binary = mag_thresh(image, sobel_kernel=ksize, mag_thresh=(50,100))
