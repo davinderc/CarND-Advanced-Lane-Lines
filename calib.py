@@ -6,7 +6,7 @@ import matplotlib.image as mpimg
 
 def calibrate():
 
-    calib_data_file = 'calib.pickle'
+    calib_data_file = 'undistortData.pickle'
     if os.path.isfile(calib_data_file): # Check for pickle file and load undistortion matrices.
         with open(calib_data_file, 'rb') as calib_f:
             data = pickle.load(calib_f)
