@@ -3,6 +3,8 @@ import os
 import numpy as np
 import matplotlib.image as mpimg
 
+# TODO: create constants so that the calibration matrices are only calculated once
+
 def calibrate():
     dir_list = os.listdir(path='./camera_cal/')
 
