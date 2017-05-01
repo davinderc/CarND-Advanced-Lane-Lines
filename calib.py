@@ -1,11 +1,21 @@
 import cv2
 import os
+import pickle
 import numpy as np
 import matplotlib.image as mpimg
 
-# TODO: create constants so that the calibration matrices are only calculated once
-
 def calibrate():
+
+    calib_data_file = 'calib.pickle'
+    if os.path.isfile(calib_data_file): # Check for pickle file and load undistortion matrices.
+        with open(calib_data_file, 'rb') as calib_f:
+            data = pickle.load(calib_f)
+            mtx = data['mtx']
+            dist = data['dist']
+            del data
+        return mtx, dist
+
+
     dir_list = os.listdir(path='./camera_cal/')
 
     calib_img = []
@@ -14,7 +24,7 @@ def calibrate():
     objpoints = []
     imgpoints = []
 
-    objp = np.zeros((6*9,3), np.float32)
+    objp = np.zeros((6*9,3), np.float32) # Create grid of standard chessboard pattern
     objp[:,:2] = np.mgrid[0:9,0:6].T.reshape(-1,2)
 
     for fname in dir_list:
@@ -38,4 +48,18 @@ def calibrate():
         dst = cv2.undistort(calib_img, mtx, dist, None, mtx)
         cv2.imwrite('./camera_cal/' + 'undist' + fname, dst)
     '''
+
+    if not os.path.isfile(calib_data_file): # Save undistortion matrices in pickle file
+        try:
+            with open(calib_data_file, 'wb') as pfile:
+                pickle.dump(
+                    {
+                        'mtx': mtx,
+                        'dist': dist,
+                    },
+                    pfile, pickle.HIGHEST_PROTOCOL)
+        except Exception as e:
+            print(e)
+            raise
+
     return mtx, dist
