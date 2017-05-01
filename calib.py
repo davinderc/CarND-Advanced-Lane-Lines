@@ -28,23 +28,23 @@ def calibrate():
     objp[:,:2] = np.mgrid[0:9,0:6].T.reshape(-1,2)
 
     for fname in dir_list:
-        calib_img = cv2.imread('./camera_cal/' + fname)
+        calib_img = cv2.imread('./camera_cal/' + fname) # Load calibration images and grayscale them
         gray = cv2.cvtColor(calib_img, cv2.COLOR_BGR2GRAY)
 
-        ret, corners = cv2.findChessboardCorners(gray, (9,6), None)
+        ret, corners = cv2.findChessboardCorners(gray, (9,6), None) # Find corners (54 of them)
         if ret:
 
-            imgpoints.append(corners)
+            imgpoints.append(corners) # If they are found, the points are mapped between distorted and standard pattern
             objpoints.append(objp)
 
-            calib_img = cv2.drawChessboardCorners(calib_img, (9,6), corners, ret)
+            #calib_img = cv2.drawChessboardCorners(calib_img, (9,6), corners, ret) # Points are drawn to check accuracy manually
             #cv2.imwrite('./camera_cal/test' + fname,calib_img)
 
     ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
 
     '''
-    for fname in dir_list:
-        calib_img = cv2.imread('./camera_cal/' + fname) # Take calibration images, undistort them, and save them.
+    for fname in dir_list: # Take calibration images, undistort them, and save them. Commented since it isn't necessary when everything is working OK
+        calib_img = cv2.imread('./camera_cal/' + fname)
         dst = cv2.undistort(calib_img, mtx, dist, None, mtx)
         cv2.imwrite('./camera_cal/' + 'undist' + fname, dst)
     '''
