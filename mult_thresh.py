@@ -21,7 +21,7 @@ def dir_threshold(img, sobel_kernel=3, thresh=(0, np.pi/2)):
 
     grad_dir = np.arctan2(abs_sobely, abs_sobelx) # Calc grad direction
 
-    sxbinary = np.zeros_like(grad_dir) # Mask for thresholded directions
+    sxbinary = np.zeros_like(grad_dir, dtype=np.uint8) # Mask for thresholded directions
     sxbinary[(grad_dir >= thresh[0]) & (grad_dir <= thresh[1])] = 1
 
     return sxbinary
