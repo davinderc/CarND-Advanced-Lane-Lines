@@ -160,12 +160,12 @@ for fname in test_fnames:
     plt.ylim(720, 0)
 
     # The sliding window search seemed to perform worse than the histogram approach
-    window_width = 50 # Windows for searching for lane lines in
-    window_height = 80 # 9 vertical layers since image height is 720
-    margin = 100 # Margin to slide left and right for searching
+    #window_width = 50 # Windows for searching for lane lines in
+    #window_height = 80 # 9 vertical layers since image height is 720
+    #margin = 100 # Margin to slide left and right for searching
 
-    window_centroids = ws.find_window_centroids(warped,window_width, window_height, margin)
-    out_img = ws.mask(window_centroids,warped)
-    cv2.imwrite(save_dir + 'lines_masked_' + fname, out_img)
+    #window_centroids = ws.find_window_centroids(warped,window_width, window_height, margin)
+    #out_img = ws.mask(window_centroids,warped)
+    #cv2.imwrite(save_dir + 'lines_masked_' + fname, out_img)
 
 # TODO: Determine lane curvature
