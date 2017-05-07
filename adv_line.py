@@ -79,7 +79,7 @@ for fname in test_fnames:
 
     #ret = cv2.imwrite(test_dir + 'dir_grad_color_' + fname, combined)
 
-# TODO: 4. Perspective transform
+# TODO: 4. Perspective transform.
     warped = warp_img.warp(combined)
     #cv2.imwrite(test_dir + 'warped_test_' + fname, warped)
 
@@ -150,9 +150,25 @@ for fname in test_fnames:
     ploty = np.linspace(0, warped.shape[0]-1, warped.shape[0])
     left_fitx = left_fit[0]*ploty**2 + left_fit[1]*ploty + left_fit[2]
     right_fitx = right_fit[0]*ploty**2 + right_fit[1]*ploty + right_fit[2]
+    #print(right_fitx.astype(np.int))
+    left_fitx_indices = np.copy(left_fitx).astype(np.int)
+    right_fitx_indices =  np.copy(right_fitx).astype(np.int)
+    y_indices = np.copy(ploty).astype(np.int)
+
+    template = np.zeros_like(warped, np.uint8) # Add the fitted lines for left and right
+    template[y_indices,left_fitx_indices] = 255
+    template[y_indices,right_fitx_indices] = 255
+    zero_channel = np.zeros_like(template)
+    template = np.array(cv2.merge((zero_channel, template, zero_channel)),np.uint8) # Green line
+    #unwarped = warp_img.warp(template, mtx='Minv')
+
 
     out_img[nonzeroy[left_lane_inds], nonzerox[left_lane_inds]] = [255, 0, 0]
     out_img[nonzeroy[right_lane_inds], nonzerox[right_lane_inds]] = [0, 0, 255]
+    print(undist.shape, template.shape)
+    overlay_in = warp_img.warp(undist)
+    out_overlay = cv2.addWeighted(overlay_in, 0.8, template, 1, 0.0) # add overlay to observe fitted lines
+
     plt.imshow(out_img)
     plt.plot(left_fitx, ploty, color='yellow')
     plt.plot(right_fitx, ploty, color='yellow')
@@ -179,4 +195,8 @@ for fname in test_fnames:
     l_radius = ((1 + (2*left_fit_real[0]*y_eval*ym_per_pix + left_fit_real[1])**2)**1.5)/np.absolute(2*left_fit_real[0])
     r_radius = ((1 + (2*right_fit_real[0]*y_eval*ym_per_pix + right_fit_real[1])**2)**1.5)/np.absolute(2*right_fit_real[0])
 
+    print(type(l_radius))
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    cv2.putText(out_overlay, 'Left curvature: ' + l_radius.astype('|S5'), (10,10), font, 4, (200,180,200), 3, cv2.LINE_AA)
     print('Radiuses for {} (L, R): {:.3f} m, {:.3f} m'.format(fname,l_radius,r_radius))
+    cv2.imwrite(save_dir + 'lines_overlayed_' + fname, out_overlay)
