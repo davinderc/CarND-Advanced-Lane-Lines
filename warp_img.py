@@ -28,9 +28,9 @@ def warp(img, mtx='M'):
     M = cv2.getPerspectiveTransform(src,dst)
     Minv = cv2.getPerspectiveTransform(dst,src)
 
-    if mtx = 'M':
+    if(mtx == 'M'):
         warped = cv2.warpPerspective(img, M, img_size, flags=cv2.INTER_LINEAR)
-    else if mtx = 'Minv':
+    elif(mtx == 'Minv'):
         warped = cv2.warpPerspective(img, Minv, img_size, flags=cv2.INTER_LINEAR)
     #cv2.imwrite(test_dir + 'warped_' + fname,warped)
     return warped
