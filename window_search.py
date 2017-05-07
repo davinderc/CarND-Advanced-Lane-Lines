@@ -50,7 +50,7 @@ def find_window_centroids(image, window_width, window_height, margin):
 
     return window_centroids
 
-window_centroids = find_window_centroids(warped, window_width, window_height, margin)
+#window_centroids = find_window_centroids(warped, window_width, window_height, margin)
 def mask(window_centroids,image):
     # If we found any window centers
     if len(window_centroids) > 0:
