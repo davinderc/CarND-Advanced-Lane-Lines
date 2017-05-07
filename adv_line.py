@@ -2,6 +2,7 @@ import cv2
 import calib
 import warp_img
 import mult_thresh as mt
+import window_search as ws
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -14,7 +15,6 @@ mtx, dist = calib.calibrate()
 test_dir = './test_images/'
 save_dir = './drawn_lines_images/'
 test_fnames = os.listdir(path=test_dir)
-#test_fnames = ['test5.jpg', 'test4.jpg','straight_lines1.jpg']
 
 for fname in test_fnames:
 #fname = 'test1.jpg'
@@ -159,6 +159,13 @@ for fname in test_fnames:
     plt.xlim(0, 1280)
     plt.ylim(720, 0)
 
-    cv2.imwrite(save_dir + 'lines_' + fname, out_img)
+    # The sliding window search seemed to perform worse than the histogram approach
+    window_width = 50 # Windows for searching for lane lines in
+    window_height = 80 # 9 vertical layers since image height is 720
+    margin = 100 # Margin to slide left and right for searching
+
+    window_centroids = ws.find_window_centroids(warped,window_width, window_height, margin)
+    out_img = ws.mask(window_centroids,warped)
+    cv2.imwrite(save_dir + 'lines_masked_' + fname, out_img)
 
 # TODO: Determine lane curvature
