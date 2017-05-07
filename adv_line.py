@@ -169,3 +169,14 @@ for fname in test_fnames:
     #cv2.imwrite(save_dir + 'lines_masked_' + fname, out_img)
 
 # TODO: Determine lane curvature
+    ym_per_pix = 30/720 # meters per pixel in y
+    xm_per_pix = 3.7/700 # meters per pixel in x
+    y_eval = np.max(ploty)
+
+    left_fit_real = np.polyfit(lefty*ym_per_pix, leftx*xm_per_pix, 2)
+    right_fit_real = np.polyfit(righty*ym_per_pix, rightx*xm_per_pix, 2)
+
+    l_radius = ((1 + (2*left_fit_real[0]*y_eval*ym_per_pix + left_fit_real[1])**2)**1.5)/np.absolute(2*left_fit_real[0])
+    r_radius = ((1 + (2*right_fit_real[0]*y_eval*ym_per_pix + right_fit_real[1])**2)**1.5)/np.absolute(2*right_fit_real[0])
+
+    print('Radiuses for {} (L, R): {:.3f} m, {:.3f} m'.format(fname,l_radius,r_radius))
