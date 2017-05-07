@@ -3,7 +3,7 @@ import os
 import numpy as np
 
 
-def warp(img):
+def warp(img, mtx='M'):
     #test_dir = './grad_test_images/'
     #test_fnames = os.listdir(path=test_dir)
 
@@ -28,7 +28,10 @@ def warp(img):
     M = cv2.getPerspectiveTransform(src,dst)
     Minv = cv2.getPerspectiveTransform(dst,src)
 
-    warped = cv2.warpPerspective(img, M, img_size, flags=cv2.INTER_LINEAR)
+    if mtx = 'M':
+        warped = cv2.warpPerspective(img, M, img_size, flags=cv2.INTER_LINEAR)
+    else if mtx = 'Minv':
+        warped = cv2.warpPerspective(img, Minv, img_size, flags=cv2.INTER_LINEAR)
     #cv2.imwrite(test_dir + 'warped_' + fname,warped)
     return warped
 #warp()
