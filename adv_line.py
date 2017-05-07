@@ -171,11 +171,11 @@ def process_frame(img):
 
     template = np.zeros_like(warped, np.uint8) # Add the fitted lines for left and right
     #print(np.any(y_indices < 0))
-    print('template: ',type(template[0][0]))
-    print('y_indices: ',type(y_indices[0]))
-    print('left_fitx_indices: ', type(left_fitx_indices[0]))
-    print(np.max(left_fitx_indices))
-    print(np.min(left_fitx_indices))
+    #print('template: ',type(template[0][0]))
+    #print('y_indices: ',type(y_indices[0]))
+    #print('left_fitx_indices: ', type(left_fitx_indices[0]))
+    #print(np.max(left_fitx_indices))
+    #print(np.min(left_fitx_indices))
     template[y_indices,left_fitx_indices] = 255
     template[y_indices,right_fitx_indices] = 255
     zero_channel = np.zeros_like(template)
