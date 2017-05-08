@@ -11,7 +11,7 @@ def warp(img, mtx='M'):
     #img = cv2.imread(test_dir + fname)
     img_size = (img.shape[1], img.shape[0])
 
-    offset = 450
+    offset = 400
 
     src = np.float32(
     [[612, 440],
@@ -22,8 +22,8 @@ def warp(img, mtx='M'):
     dst = np.float32(
     [[offset, 20],
      [img_size[0] - offset, 20],
-     [img_size[0] - offset, 655],
-     [offset, 655]])
+     [img_size[0] - offset, 700],
+     [offset, 700]])
 
     M = cv2.getPerspectiveTransform(src,dst)
     Minv = cv2.getPerspectiveTransform(dst,src)
