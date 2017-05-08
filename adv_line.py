@@ -7,16 +7,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 from moviepy.editor import VideoFileClip
-#from pylab import *
 
-#cap = cv2.VideoCapture(vidfile)
-
-#fourcc = cv2.VideoWriter_fourcc(*'X264')
-
-#width = int(cap.get(3))
-#height = int(cap.get(4))
-
-#out = cv2.VideoWriter('./test.mp4',fourcc, 25.0, (width, height))
 
 # TODO: 1. Camera calibration
 mtx, dist = calib.calibrate()
@@ -40,56 +31,43 @@ def process_frame(img):
     # TODO: 3. Color/gradient threshold
     # TODO: Test other gradient thresholds to see what is going on
 
-    # Threshold gradients with angles between 30 and 60, and between 120 and 150
-    dir_grad_r = mt.dir_threshold(undist,sobel_kernel=3, thresh=(np.pi/6,np.pi/3))
-    dir_grad_l = mt.dir_threshold(undist,sobel_kernel=3, thresh=(2*np.pi/3,5*np.pi/6))
-
-    # Threshold gradients by magnitude
-    abs_sob_binary = mt.mag_thresh(undist, sobel_kernel=3, mag_thresh=(80,120))
-
     #hls = cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
     #H = hls[:,:,0]
     #L = hls[:,:,1]
     #S = hls[:,:,2]
 
-    HSV = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    HSV = cv2.cvtColor(undist, cv2.COLOR_BGR2HSV)
+
+    YUV = cv2.cvtColor(undist, cv2.COLOR_BGR2YUV)
+    U = cv2.inRange(YUV, (0, 145, 0), (255, 185, 255))
+    V = cv2.inRange(YUV, (0, 0, 120), (255, 255, 140))
 
     # Yellow threshold
-    yellow = cv2.inRange(HSV, (0, 80, 100), (40, 255, 255))
+    yellow = (U - V).astype(np.uint8)
 
     # White threshold
     sensitivity_1 = 50
     white = cv2.inRange(HSV, (0, 0, 255 - sensitivity_1), (255, 20, 255))
 
     sensitivity_2 = 35
-    HLS = cv2.cvtColor(img, cv2.COLOR_BGR2HLS)
+    HLS = cv2.cvtColor(undist, cv2.COLOR_BGR2HLS)
     white_2 = cv2.inRange(HLS, (0, 255 - sensitivity_2, 0), (255, 255, sensitivity_2))
-    white_3 = cv2.inRange(img, (200, 200, 200), (255, 255, 255))
+    white_3 = cv2.inRange(undist, (200, 200, 200), (255, 255, 255))
 
     color_binary = yellow | white | white_2 | white_3
 
-    #cv2.imshow('image',color_binary)
-    #cv2.waitKey(0)
-    #cv2.destroyAllWindows()
+    #cv2.imwrite(test_dir + 'undist_' + fname, undist)
 
-    #color_binary = np.zeros_like(dir_grad_r)
+    # Threshold gradients with angles between 30 and 60, and between 120 and 150
+    dir_grad_r = mt.dir_threshold(color_binary,sobel_kernel=3, thresh=(np.pi/6,np.pi/3))
+    dir_grad_l = mt.dir_threshold(color_binary,sobel_kernel=3, thresh=(2*np.pi/3,5*np.pi/6))
 
-    #color_binary[(L >= 60) & (L <= 120)] = 1
-    #color_binary[(S >= 160) & (S <= 255)] = 1
-    #ret = cv2.imwrite(test_dir + 'h_' + fname, H)
-    #ret = cv2.imwrite(test_dir + 'l_' + fname, L)
-    #ret = cv2.imwrite(test_dir + 's_' + fname, S)
+    # Threshold gradients by magnitude
+    abs_sob_binary = mt.mag_thresh(color_binary, sobel_kernel=5, mag_thresh=(100,160))
 
     combined = np.zeros_like(color_binary)
-    #combined[color_binary == 1] = 255
-    #combined[(dir_grad_r == 1) | (dir_grad_l == 1)] += 100
-    #combined[abs_sob_binary == 1] += 100
-    #print(combined.shape)
-    combined[((dir_grad_r == 1) | (dir_grad_l == 1)) & (abs_sob_binary == 1)] = 255
-    combined = combined | color_binary
 
-    #undist[combined == 1] = 255
-    #undist[combined == 0] = 0
+    combined[((dir_grad_r == 1) | (dir_grad_l == 1)) & (abs_sob_binary == 1)] = 255
 
     #ret = cv2.imwrite(test_dir + 'dir_grad_color_' + fname, combined)
 
@@ -158,8 +136,15 @@ def process_frame(img):
     rightx = nonzerox[right_lane_inds]
     righty = nonzeroy[right_lane_inds]
 
-    left_fit = np.polyfit(lefty, leftx, 2)
-    right_fit = np.polyfit(righty, rightx, 2)
+
+    if(leftx.size == 0):
+        left_fit = [0,0,0]
+    else:
+        left_fit = np.polyfit(lefty, leftx, 2)
+    if(rightx.size != 0):
+        right_fit = [0,0,0]
+    else:
+        right_fit = np.polyfit(righty, rightx, 2)
 
     ploty = np.linspace(0, warped.shape[0]-1, warped.shape[0])
     left_fitx = left_fit[0]*ploty**2 + left_fit[1]*ploty + left_fit[2]
@@ -170,14 +155,11 @@ def process_frame(img):
     y_indices = np.copy(ploty).astype(np.int)
 
     template = np.zeros_like(warped, np.uint8) # Add the fitted lines for left and right
-    #print(np.any(y_indices < 0))
-    #print('template: ',type(template[0][0]))
-    #print('y_indices: ',type(y_indices[0]))
-    #print('left_fitx_indices: ', type(left_fitx_indices[0]))
-    #print(np.max(left_fitx_indices))
-    #print(np.min(left_fitx_indices))
-    template[y_indices,left_fitx_indices] = 255
-    template[y_indices,right_fitx_indices] = 255
+    sane_left = (left_fitx_indices >= 0) & (left_fitx_indices < 1280)
+    sane_right = (right_fitx_indices >= 0) & (right_fitx_indices < 1280)
+    template[y_indices[sane_left],left_fitx_indices[sane_left]] = 255
+    template[y_indices[sane_right], right_fitx_indices[sane_right]] = 255
+    #template[y_ind_right_flat,right_fitx_flat] = 255
     zero_channel = np.zeros_like(template)
     template = np.array(cv2.merge((zero_channel, template, zero_channel)),np.uint8) # Green line
     #unwarped = warp_img.warp(template, mtx='Minv')
@@ -209,8 +191,14 @@ def process_frame(img):
     xm_per_pix = 3.7/700 # meters per pixel in x
     y_eval = np.max(ploty)
 
-    left_fit_real = np.polyfit(lefty*ym_per_pix, leftx*xm_per_pix, 2)
-    right_fit_real = np.polyfit(righty*ym_per_pix, rightx*xm_per_pix, 2)
+    if(leftx.size == 0):
+        left_fit_real = [0,0,0]
+    else:
+        left_fit_real = np.polyfit(lefty*ym_per_pix, leftx*xm_per_pix, 2)
+    if(rightx.size == 0):
+        right_fit_real = [0,0,0]
+    else:
+        right_fit_real = np.polyfit(righty*ym_per_pix, rightx*xm_per_pix, 2)
 
     l_radius = ((1 + (2*left_fit_real[0]*y_eval*ym_per_pix + left_fit_real[1])**2)**1.5)/np.absolute(2*left_fit_real[0])
     r_radius = ((1 + (2*right_fit_real[0]*y_eval*ym_per_pix + right_fit_real[1])**2)**1.5)/np.absolute(2*right_fit_real[0])
