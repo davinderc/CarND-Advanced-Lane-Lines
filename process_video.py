@@ -7,6 +7,7 @@ import adv_line as al
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 from moviepy.editor import VideoFileClip
 #from pylab import *
 
@@ -18,11 +19,17 @@ mtx, dist = calib.calibrate()
 
 clip1 = VideoFileClip(vidfile)
 
-#frames = [551,552,553,554,555]
+#frames = np.arange(0,50,5)
+#frames = [39.0625]
 
 #for i in frames:
-#    test_img = clip1.get_frame(i)
-#    result = al.process_frame(test_img)
+    #test_img = clip1.get_frame(39.0625)
+    #temp = test_img[:,:,0]
+    #test_img[:,:,0] = test_img[:,:,2]
+    #test_img[:,:,2] = temp
+    #mpimg.imsave('./video_imgs/video_' + i.astype(np.str), test_img)
+    #mpimg.imsave('./video_imgs/video_' + '39', test_img)
+    #result = al.process_frame(test_img)
 
 test_clip = clip1.fl_image(al.process_frame)
 
