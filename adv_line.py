@@ -97,9 +97,9 @@ def process_frame(img):
     leftx_current = leftx_base
     rightx_current = rightx_base
 
-    margin = 100
+    margin = 80
 
-    minpix = 50
+    minpix = 70
 
     left_lane_inds = []
     right_lane_inds = []
@@ -171,11 +171,11 @@ def process_frame(img):
     overlay_in = warp_img.warp(undist)
     out_overlay = cv2.addWeighted(overlay_in, 0.8, template, 1, 0.0) # add overlay to observe fitted lines
 
-    plt.imshow(out_img)
-    plt.plot(left_fitx, ploty, color='yellow')
-    plt.plot(right_fitx, ploty, color='yellow')
-    plt.xlim(0, 1280)
-    plt.ylim(720, 0)
+    # plt.imshow(out_img)
+    # plt.plot(left_fitx, ploty, color='yellow')
+    # plt.plot(right_fitx, ploty, color='yellow')
+    # plt.xlim(0, 1280)
+    # plt.ylim(720, 0)
 
     # The sliding window search seemed to perform worse than the histogram approach
     #window_width = 50 # Windows for searching for lane lines in
