@@ -10,9 +10,10 @@ import matplotlib.image as mpimg
 # Function to calc gradient direction between given thresholds
 
 def dir_threshold(img, sobel_kernel=3, thresh=(0, np.pi/2)):
-
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Convert to grayscale
-
+    if(len(img.shape) == 3):
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Convert to grayscale
+    else:
+        gray = img
     sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize = sobel_kernel) # Apply Sobel
     sobely = cv2.Sobel(gray, cv2.CV_64F, 0, 1, ksize = sobel_kernel)
 
@@ -30,8 +31,10 @@ def dir_threshold(img, sobel_kernel=3, thresh=(0, np.pi/2)):
 
 def mag_thresh(img, sobel_kernel=3, mag_thresh=(0, 255)):
 
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Grayscale
-
+    if(len(img.shape) == 3):
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Grayscale
+    else:
+        gray = img
     if(sobel_kernel % 2 == 1): # Test kernel values to be odd (optional?)
         k = sobel_kernel
     else:
@@ -51,8 +54,10 @@ def mag_thresh(img, sobel_kernel=3, mag_thresh=(0, 255)):
 
 # Calc x or y gradient and applies thresholds
 def abs_sobel_thresh(img, orient='x', sobel_kernel=3, thresh=(0,255)):
-
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Grayscale
+    if(len(img.shape) == 3):
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Grayscale
+    else:
+        gray = img
 
     if (orient == 'x'): # Absolute Sobel in requested orientation, scaled, in uint8
         sobelx = cv2.Sobel(gray, cv2.CV_64F, 1, 0, ksize = sobel_kernel)
