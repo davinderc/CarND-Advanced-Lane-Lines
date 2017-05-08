@@ -13,7 +13,7 @@ from moviepy.editor import VideoFileClip
 
 vidfile = './project_video.mp4'
 
-output_vid = './test.mp4'
+output_vid = './test_threshold.mp4'
 
 mtx, dist = calib.calibrate()
 
