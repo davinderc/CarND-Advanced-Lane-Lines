@@ -77,7 +77,7 @@ def process_frame(img):
 
     leftx_current = leftx_base
     rightx_current = rightx_base
-    lane_center = rightx_base - leftx_base # Calculate vehicle position w.r.t. center of lane
+    lane_center = (rightx_base + leftx_base)/2 # Calculate vehicle position w.r.t. center of lane
     car_dev = (undist.shape[1]/2) - lane_center
 
     margin = 90
