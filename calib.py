@@ -37,17 +37,7 @@ def calibrate():
             imgpoints.append(corners) # If they are found, the points are mapped between distorted and standard pattern
             objpoints.append(objp)
 
-            #calib_img = cv2.drawChessboardCorners(calib_img, (9,6), corners, ret) # Points are drawn to check accuracy manually
-            #cv2.imwrite('./camera_cal/test' + fname,calib_img)
-
     ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
-
-    '''
-    for fname in dir_list: # Take calibration images, undistort them, and save them. Commented since it isn't necessary when everything is working OK
-        calib_img = cv2.imread('./camera_cal/' + fname)
-        dst = cv2.undistort(calib_img, mtx, dist, None, mtx)
-        cv2.imwrite('./camera_cal/' + 'undist' + fname, dst)
-    '''
 
     if not os.path.isfile(calib_data_file): # Save undistortion matrices in pickle file
         try:

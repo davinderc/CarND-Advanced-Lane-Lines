@@ -1,6 +1,7 @@
 import cv2
 import calib
 import warp_img
+import line
 import mult_thresh as mt
 import window_search as ws
 import adv_line as al
@@ -11,9 +12,15 @@ import matplotlib.image as mpimg
 from moviepy.editor import VideoFileClip
 #from pylab import *
 
+global l_line
+global r_line
+
+#l_line = line.Line()
+#r_line = line.Line()
+
 vidfile = './project_video.mp4'
 
-output_vid = './test_threshold.mp4'
+output_vid = './test_writeup34.mp4'
 
 mtx, dist = calib.calibrate()
 
@@ -34,3 +41,8 @@ clip1 = VideoFileClip(vidfile)
 test_clip = clip1.fl_image(al.process_frame)
 
 test_clip.write_videofile(output_vid, audio=False)
+
+#TODO Use Line classes and average out values to make smooth detections
+    # Then display curvature and improve thresholding
+    # Improve detection on white concrete
+    # adjust mask
